@@ -16,7 +16,7 @@ import Message from '../message/message'
 import Personal from '../personal/personal'
 import NotFound from '../../components/not-found/not-found'
 import NavFooter from '../../components/nav-footer/nav-footer'
-import Chat from '../chat/chat'
+
 
 
 import {getRedirectTo} from '../../utils'
@@ -29,16 +29,16 @@ class Main extends Component {
     {
       path: '/laoban', // 路由路径
       component: Laoban,
-      title: '大神列表',
-      icon: 'dashen',
-      text: '大神',
+      title: '老板列表',
+      icon: 'laoban',
+      text: '老板',
     },
     {
       path: '/dashen', // 路由路径
       component: Dashen,
-      title: '老板列表',
-      icon: 'laoban',
-      text: '老板',
+      title: '大神列表',
+      icon: 'dashen',
+      text: '大神',
     },
     {
       path: '/message', // 路由路径
@@ -76,7 +76,7 @@ class Main extends Component {
       return <Redirect to='/login'/>
     }
     // 如果有,读取redux中的user状态
-    const {user, unReadCount} = this.props
+    const {user} = this.props
     // 如果user有没有_id, 返回null(不做任何显示)
     // debugger
     if(!user._id) {
@@ -116,18 +116,18 @@ class Main extends Component {
           }
           <Route path='/laobaninfo' component={LaobanInfo}/>
           <Route path='/dasheninfo' component={DashenInfo}/>
-          <Route path='/chat/:userid' component={Chat}/>
+         
 
           <Route component={NotFound}/>
         </Switch>
-        {currentNav ? <NavFooter navList={navList} unReadCount={unReadCount}/> : null}
+        {currentNav ? <NavFooter navList={navList}/> : null}
       </div>
     )
   }
 }
 
 export default connect(
-  state => ({user: state.user, unReadCount: state.chat.unReadCount}),
+  state => ({user: state.user}),
   {getUser}
 )(Main)
 
