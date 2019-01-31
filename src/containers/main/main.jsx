@@ -13,6 +13,7 @@ import DashenInfo from '../dashen-info/dashen-info'
 import Dashen from '../dashen/dashen'
 import Laoban from '../laoban/laoban'
 import Message from '../message/message'
+import Chart from '../chart/chart'
 import Personal from '../personal/personal'
 import NotFound from '../../components/not-found/not-found'
 import NavFooter from '../../components/nav-footer/nav-footer'
@@ -29,16 +30,16 @@ class Main extends Component {
     {
       path: '/laoban', // 路由路径
       component: Laoban,
-      title: '老板列表',
-      icon: 'laoban',
-      text: '老板',
+      title: '大神列表',
+      icon: 'dashen',
+      text: '大神',
     },
     {
       path: '/dashen', // 路由路径
       component: Dashen,
-      title: '大神列表',
-      icon: 'dashen',
-      text: '大神',
+      title: '老板列表',
+      icon: 'laoban',
+      text: '老板',
     },
     {
       path: '/message', // 路由路径
@@ -55,7 +56,6 @@ class Main extends Component {
       text: '个人',
     }
   ]
-
   componentDidMount () {
     //登陆过(cookie中有userid), 但没有有登陆(redux管理的user中没有_id) 发请求获取对应的user
     const userid = Cookies.get('userid')
@@ -64,6 +64,7 @@ class Main extends Component {
       // 发送异步请求, 获取user
       // console.log('发送ajax请求获取user')
       this.props.getUser()
+      console.log('getUser()')
     }
   }
 
@@ -76,7 +77,7 @@ class Main extends Component {
       return <Redirect to='/login'/>
     }
     // 如果有,读取redux中的user状态
-    const {user} = this.props
+    const {user,unReadCount} = this.props
     // 如果user有没有_id, 返回null(不做任何显示)
     // debugger
     if(!user._id) {
@@ -116,18 +117,19 @@ class Main extends Component {
           }
           <Route path='/laobaninfo' component={LaobanInfo}/>
           <Route path='/dasheninfo' component={DashenInfo}/>
+          <Route path='/chart/:userid' component={Chart}/>
          
 
           <Route component={NotFound}/>
         </Switch>
-        {currentNav ? <NavFooter navList={navList}/> : null}
+        {currentNav ? <NavFooter navList={navList} unReadCount={unReadCount}/> : null}
       </div>
     )
   }
 }
 
 export default connect(
-  state => ({user: state.user}),
+  state => ({user: state.user,unReadCount:state.chat.unReadCount}),
   {getUser}
 )(Main)
 

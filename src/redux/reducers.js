@@ -39,7 +39,6 @@ function user(state=initUser, action) {
   }
 }
 
-
 const initUserList = []
 // 产生userlist状态的reducer
 function userList(state=initUserList, action) {
@@ -50,14 +49,56 @@ function userList(state=initUserList, action) {
       return state
   }
 }
-
+const initChart={
+  users:{},//所有用户信息的对象 属性名userid,属性值：{username header}
+  chatMsgs:[],//当前用户所有相关的msg数组
+  unReadCount:0//总的未读数量
+}
+//产生聊天状态的chat  //data{users,chartMsgs}
+function chat(state=initChart,action){
+  switch(action.type){
+    case RECEIVE_MSG_LIST:
+    const {users,chatMsgs,userid}=action.data
+    return {
+      users,
+      chatMsgs: chatMsgs,
+      unReadCount:chatMsgs.reduce((pre,msg)=>pre+(!msg.read&&msg.to===userid?1:0),0)
+    }
+    case RECEIVE_MSG:
+    const {chatMsg} = action.data
+    return{
+      users:state.users,
+      chatMsgs: [...state.chatMsgs,chatMsg],
+      unReadCount:state.unReadCount+(!chatMsg.read&&chatMsg.to===action.data.userid?1:0)
+    }
+    case MSG_READ:
+    const {count,from,to} = action.data
+    /* state.chatMsgs.forEach(msg=>{
+      if(msg.from===from&&msg.to===to&&!msg.read){
+        msg.read=true
+      }
+    }) */
+    return{
+      users:state.users,
+      chatMsgs:state.chatMsgs.map(msg=>{
+        if(msg.from===from&&msg.to===to&&!msg.read){
+          return {...msg,read:true}
+        }else{return msg}
+      }),
+      unReadCount:state.unReadCount-count
+    }
+    default:
+    return state
+  }
+}
 
 
 
 
 export default combineReducers({
   user,
-  
+  userList,
+  chat
 })
 // 向外暴露的状态的结构: {user: {}, userList: [], chat: {}}
 
